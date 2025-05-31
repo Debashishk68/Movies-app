@@ -1,74 +1,81 @@
 import { useState } from 'react';
-import { FaSearch, FaBars, FaTimes } from 'react-icons/fa'; // Added icons for hamburger menu and close button
+import { Dialog } from '@headlessui/react';
+import { FiMenu, FiX } from 'react-icons/fi';
+
+import ThemeToggle from './ThemeToggle';
+import SearchBar from './SearchBar';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-  const [showSearch, setShowSearch] = useState(false);
-  const [query, setQuery] = useState('');
-  const [menuOpen, setMenuOpen] = useState(false); // State for managing the mobile menu
-
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const handleSearch = (query) => {
+    console.log('Search query:', query);
+    navigate(`/search/${query}`); 
+    // TODO: Add your search logic here, e.g., navigate to results or filter items
   };
 
   return (
-    <nav className="fixed top-0 w-full bg-gray-900 bg-opacity-80 flex items-center justify-between px-6 py-4 z-50 shadow-lg transition-all">
-      {/* Brand Name */}
-      <a href="/" className="text-white text-2xl font-semibold hover:text-red-500 transition">
-        PopKorn Explorer
-      </a>
+    <nav className="bg-white dark:bg-gray-800 shadow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
+          <div className="flex items-center">
+            {/* Mobile menu button */}
+            <div className="-ml-2 mr-2 flex items-center md:hidden">
+              <button
+                onClick={() => setIsOpen(true)}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700"
+              >
+                <FiMenu className="h-6 w-6" />
+              </button>
+            </div>
 
-      {/* Desktop Navigation Links */}
-      <ul className="hidden md:flex space-x-8 text-white text-lg font-medium">
-        <li><a href="/" className="hover:text-red-500 transition">Home</a></li>
-        <li><a href="/about" className="hover:text-red-500 transition">About</a></li>
-        <li><a href="/services" className="hover:text-red-500 transition">Services</a></li>
-        <li><a href="/blog" className="hover:text-red-500 transition">Blog</a></li>
-        <li><a href="/contact" className="hover:text-red-500 transition">Contact</a></li>
-      </ul>
+            {/* Brand */}
+            <div className="flex-shrink-0 flex items-center">
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">tMovies</h1>
+            </div>
 
-      {/* Search Box */}
-      <div className="relative flex items-center">
-        {showSearch ? (
-          <input
-            type="text"
-            placeholder="Search..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onBlur={() => setShowSearch(false)}
-            autoFocus
-            className="px-4 py-2 text-white w-48 sm:w-64 rounded-md bg-gray-800 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300 ease-in-out"
-          />
-        ) : (
-          <FaSearch
-            size={24}
-            className="text-white cursor-pointer hover:text-red-500 transition"
-            onClick={() => setShowSearch(true)}
-          />
-        )}
-      </div>
+            {/* Desktop nav links */}
+            <div className="hidden md:ml-6 md:flex md:space-x-8">
+              <a href="/" className="text-gray-900 dark:text-white px-3 py-2 rounded-md text-sm font-medium">Home</a>
+              <a href="/movies" className="text-gray-900 dark:text-white px-3 py-2 rounded-md text-sm font-medium">Movies</a>
+              <a href="/tv-series" className="text-gray-900 dark:text-white px-3 py-2 rounded-md text-sm font-medium">TV Series</a>
+            </div>
+          </div>
 
-      {/* Mobile Hamburger Menu Icon */}
-      <div className="md:hidden flex items-center">
-        <button onClick={toggleMenu} className="text-white">
-          {menuOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation Links */}
-      <div className={`md:hidden absolute top-0 left-0 w-full h-screen bg-gray-900 bg-opacity-80 flex justify-center items-center ${menuOpen ? 'block' : 'hidden'}`}>
-        <div className="absolute top-4 right-4">
-          <button onClick={toggleMenu} className="text-white text-2xl">
-            <FaTimes />
-          </button>
+          {/* Right side controls: Search + Theme Toggle */}
+          <div className="flex items-center space-x-4">
+            <SearchBar onSearch={handleSearch} className="hidden md:flex w-64" />
+            <ThemeToggle />
+          </div>
         </div>
-        <ul className="space-y-6 text-white text-lg font-medium">
-          <li><a href="/" className="hover:text-red-500 transition" onClick={toggleMenu}>Home</a></li>
-          <li><a href="/about" className="hover:text-red-500 transition" onClick={toggleMenu}>About</a></li>
-          <li><a href="/services" className="hover:text-red-500 transition" onClick={toggleMenu}>Services</a></li>
-          <li><a href="/blog" className="hover:text-red-500 transition" onClick={toggleMenu}>Blog</a></li>
-          <li><a href="/contact" className="hover:text-red-500 transition" onClick={toggleMenu}>Contact</a></li>
-        </ul>
       </div>
+
+      {/* Mobile menu dialog */}
+      <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="md:hidden">
+        <div className="fixed inset-0 z-40 flex">
+          <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
+          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white dark:bg-gray-800">
+            <div className="absolute top-0 right-0 -mr-12 pt-2">
+              <button onClick={() => setIsOpen(false)} className="ml-1 flex items-center justify-center h-10 w-10 rounded-full">
+                <FiX className="h-6 w-6 text-white" />
+              </button>
+            </div>
+            <div className="mt-5 flex-1 h-0 overflow-y-auto px-2 space-y-1">
+              <nav>
+                <a href="/" className="text-gray-900 dark:text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
+                <a href="/movies" className="text-gray-900 dark:text-white block px-3 py-2 rounded-md text-base font-medium">Movies</a>
+                <a href="/tv-series" className="text-gray-900 dark:text-white block px-3 py-2 rounded-md text-base font-medium">TV Series</a>
+              </nav>
+              {/* Mobile SearchBar inside menu */}
+              <div className="mt-4">
+                <SearchBar onSearch={handleSearch} />
+              </div>
+              {/* Mobile ThemeToggle can be added here if desired */}
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </nav>
   );
 };
