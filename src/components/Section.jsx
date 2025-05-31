@@ -35,9 +35,7 @@ const Section = ({ title }) => {
     <section className="text-white px-4 py-6">
       <div className="flex justify-between items-center mb-5">
         <h3 className="text-2xl md:text-3xl font-extrabold">{title}</h3>
-        <button className="flex items-center gap-1 text-green-400 hover:text-green-300 hover:underline text-sm font-medium transition">
-          View more <ChevronRight size={16} />
-        </button>
+       
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
